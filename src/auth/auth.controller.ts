@@ -1,5 +1,6 @@
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,12 @@ export class AuthController {
         }
         const token = this.authService.generateToken(user);
         return { token };
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('profile')
+    async profile(@Request() req) {
+        return req.user;
     }
 
 }

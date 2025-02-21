@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
+import { User } from '../schemas/user.schema';
 import * as bcrypt from 'bcryptjs'
 import { JwtService } from '@nestjs/jwt';
 
@@ -12,7 +12,7 @@ export class AuthService {
     async register(name: string, email: string, password: string): Promise<User> {
         const existingUser = await this.userModel.findOne({ email });
         if (existingUser) {
-        throw new ConflictException('El email ya está registrado'); // Lanza un error 409
+        throw new ConflictException('El email ya está registrado');
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new this.userModel({ name, email, password: hashedPassword });
@@ -30,5 +30,5 @@ export class AuthService {
     generateToken(user: User): string {
         const payload = { email: user.email, sub: user._id, name: user.name };
         return this.jwtService.sign(payload); 
-      }
+    }
 }
